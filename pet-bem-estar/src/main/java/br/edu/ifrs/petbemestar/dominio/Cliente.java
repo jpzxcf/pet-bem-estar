@@ -13,6 +13,7 @@ public class Cliente {
     private String nome;
     private String telefone;
     private List<Animal> animais = new ArrayList<>();
+    private List<Atendimento> atendimentos = new ArrayList<>();
 
     protected Cliente() {
     }
@@ -23,17 +24,35 @@ public class Cliente {
         this.animais = animais;
     }
 
+    public void adicionarAnimal(Animal animal) {
+        animais.add(animal);
+        animal.setDono(this);
+    }
+
     public Atendimento registrarAtendimento(
             Animal animal,
             TipoAtendimento tipoAtendimento,
-            Veterinario, veterinario,
+            Veterinario veterinario,
             StatusAtendimento status
     ) {
         if (!animais.contains(animal)) {
             throw new IllegalArgumentException("Este animal nao pertence a este cliente.");
         }
 
-        return new Atendimento(tipoAtendimento, status, this, animal);
+        Atendimento atendimento = new Atendimento(null, tipoAtendimento, status, this, animal, veterinario);
+        atendimentos.add(atendimento);
+        animal.adicionarAtendimento(atendimento);
+        veterinario.adicionarAtendimento(atendimento);
+
+        return atendimento;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNome() {
@@ -58,5 +77,13 @@ public class Cliente {
 
     public void setAnimais(List<Animal> animais) {
         this.animais = animais;
+    }
+
+    public List<Atendimento> getAtendimentos() {
+        return atendimentos;
+    }
+
+    public void setAtendimentos(List<Atendimento> atendimentos) {
+        this.atendimentos = atendimentos;
     }
 }
