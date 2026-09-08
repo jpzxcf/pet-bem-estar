@@ -1,17 +1,32 @@
 package br.edu.ifrs.petbemestar.dominio;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Atendimento {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Enumerated(EnumType.STRING)
     private TipoAtendimento tipoAtendimento;
+
+    @Enumerated(EnumType.STRING)
     private StatusAtendimento status;
+
+    @ManyToOne
     private Cliente cliente;
+
+    @ManyToOne
     private Animal animal;
+
+    @ManyToOne
     private Veterinario veterinario;
 
     protected Atendimento() {

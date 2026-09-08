@@ -1,7 +1,13 @@
 package br.edu.ifrs.petbemestar.dominio;
 
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,10 +15,17 @@ import java.util.List;
 public class Veterinario {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
+    @ElementCollection
     private List<String> vacinas;
+
+    @ElementCollection
+    @Enumerated(EnumType.STRING)
     private List<DiasDeTrabalho> diasAtendimento;
+
+    @OneToMany(mappedBy = "veterinario")
     private List<Atendimento> atendimentos = new ArrayList<>();
 
     protected Veterinario() {

@@ -1,7 +1,10 @@
 package br.edu.ifrs.petbemestar.dominio;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,10 +12,15 @@ import java.util.List;
 public class Cliente {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
     private String telefone;
+
+    @OneToMany(mappedBy = "dono")
     private List<Animal> animais = new ArrayList<>();
+
+    @OneToMany(mappedBy = "cliente")
     private List<Atendimento> atendimentos = new ArrayList<>();
 
     protected Cliente() {
