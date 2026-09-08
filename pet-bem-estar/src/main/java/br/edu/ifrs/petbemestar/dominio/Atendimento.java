@@ -1,5 +1,7 @@
 package br.edu.ifrs.petbemestar.dominio;
 
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
