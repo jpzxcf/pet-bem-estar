@@ -3,6 +3,10 @@ package br.edu.ifrs.petbemestar;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.edu.ifrs.petbemestar.dao.AtendimentoDAO;
+import br.edu.ifrs.petbemestar.dao.AtendimentoDAOJPA;
+import br.edu.ifrs.petbemestar.dao.ClienteDAO;
+import br.edu.ifrs.petbemestar.dao.ClienteDAOJPA;
 import br.edu.ifrs.petbemestar.dominio.Animal;
 import br.edu.ifrs.petbemestar.dominio.Atendimento;
 import br.edu.ifrs.petbemestar.dominio.Cliente;
@@ -36,37 +40,34 @@ public class Principal {
                 List.of(DiasDeTrabalho.QUARTA, DiasDeTrabalho.QUINTA, DiasDeTrabalho.SEXTA)
         );
 
-        Atendimento consulta = tutor.registrarAtendimento(
-                rex, TipoAtendimento.CONSULTA, vet, StatusAtendimento.MARCADO);
-        Atendimento banho = tutor.registrarAtendimento(
-                mimi, TipoAtendimento.BANHO_E_TOSA, vet, StatusAtendimento.FEITO);
+        Atendimento consulta = tutor.registrarAtendimento(rex, TipoAtendimento.CONSULTA, vet, StatusAtendimento.MARCADO);
+        Atendimento banho = tutor.registrarAtendimento(rex, TipoAtendimento.BANHO, vet, StatusAtendimento.FEITO);
+        Atendimento tosa = tutor.registrarAtendimento(mimi, TipoAtendimento.TOSA, vet, StatusAtendimento.MARCADO);
 
         em.persist(tutor);
-        for (Animal animal : tutor.getAnimais()) {
-            em.persist(animal);
-        }
+        em.persist(rex);
+        em.persist(mimi);
         em.persist(vet);
-        for (Atendimento atendimento : List.of(consulta, banho)) {
-            em.persist(atendimento);
-        }
+        em.persist(consulta);
+        em.persist(banho);
+        em.persist(tosa);
 
         em.getTransaction().commit();
-
-        System.out.println("Cliente id ....... " + tutor.getId());
-        System.out.println("Animais .......... " + idsDos(tutor.getAnimais()));
-        System.out.println("Veterinario id ... " + vet.getId());
-        System.out.println("Atendimentos ..... " + idsDos(List.of(consulta, banho)));
-
         em.close();
         emf.close();
-    }
 
-    private static List<Long> idsDos(List<?> entidades) {
-        List<Long> ids = new ArrayList<>();
-        for (Object e : entidades) {
-            if (e instanceof Animal a) ids.add(a.getId());
-            if (e instanceof Atendimento at) ids.add(at.getId());
-        }
-        return ids;
+        ClienteDAO clienteDAO = new ClienteDAOJPA();
+        AtendimentoDAO atendimentoDAO = new AtendimentoDAOJPA();
+
+        Cliente marlene = clienteDAO.buscarPorId(tutor.getId());
+        marlene.setTelefone("51988887777");
+        clienteDAO.atualizar(marlene);
+
+        atendimentoDAO.remover(tosa.getId());
+
+        List<Atendimento> atendimentosDoRex = atendimentoDAO.listarPorAnimal(rex.getId());
+        System.out.println("Telefone atualizado: " + clienteDAO.buscarPorId(tutor.getId()).getTelefone());
+        System.out.println("Atendimentos do Rex: " + atendimentosDoRex.size());
+        System.out.println("Marcados: " + atendimentoDAO.listarPorStatus(StatusAtendimento.MARCADO).size());
     }
 }
